@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "composite": true
+    "composite": true,
+    "outDir": "lib"
   },
   "include": [
     "src"
