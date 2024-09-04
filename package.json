@@ -1,4 +1,13 @@
 {
   "name": "ts-references",
-  "packageManager": "yarn@4.3.1"
+  "packageManager": "yarn@4.3.1",
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

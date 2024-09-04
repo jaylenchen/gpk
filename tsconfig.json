@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "./packages/p1"
+    },
+    {
+      "path": "./packages/p2"
+    }
+  ]
+}
