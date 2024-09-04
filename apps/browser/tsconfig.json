@@ -1,16 +1,16 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
-    "outDir": "lib",
-    "rootDir": "src"
+    "outDir": "dist",
+    "rootDir": "src",
+    "allowJs": true
   },
   "include": [
     "src"
   ],
   "references": [
     {
-      "path": "../p1"
+      "path": "../../packages/p2"
     }
   ]
 }

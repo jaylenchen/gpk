@@ -1,3 +1,7 @@
 {
-  "name": "p1"
+  "name": "@ts/p1",
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc -b"
+  }
 }

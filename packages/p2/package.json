@@ -1,3 +1,14 @@
 {
-  "name": "p2"
+  "name": "@ts/p2",
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc -b"
+  },
+  "dependencies": {
+    "@ts/p1": "workspace:*"
+  },
+  "files": [
+    "lib",
+    "src"
+  ]
 }
