@@ -7,7 +7,15 @@
  * `import { browser } from "@ts/p2/lib/browser/frontend-application.js"`
  * 改成
  * `import { browser } from "@ts/p2/lib/browser/frontend-application"`
+ * 
+ * 为了解决上面的问题，我们先让tsc build构建相关项目，然后再使用vite二次构建dist内容，最后就可以运行dist内容了
+ * 
+ * 是的，对于仅包含 TypeScript 项目并且主要关注增量构建和依赖关系管理的情况，你可以只使用 tsc -b 来处理这些问题，而不需要使用 Nx。tsc -b 可以有效地处理 TypeScript 项目中的依赖关系，并提供增量构建功能。
  */
 
-import { browser } from "@ts/p2/lib/browser/frontend-application";
-console.log("🚀 ~ browser:", browser)
+import { main } from "@ts/p2/lib/browser/frontend-application";
+
+
+const startBrowser: () => void = main;
+
+startBrowser();

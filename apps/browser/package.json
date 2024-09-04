@@ -2,7 +2,9 @@
   "name": "@ts/browser",
   "type": "module",
   "scripts": {
-    "dev": "node ./src/index.js"
+    "build": "npx tsc --build",
+    "compile": "yarn build && npx vite build",
+    "dev": "node ./dist/index.js"
   },
   "dependencies": {
     "@ts/p2": "workspace:*"
