@@ -4,15 +4,15 @@
  * 但是，这个不是我们想要的结果，因为我们想要的是在不带后缀名的情况下也能正常导入，
  * 现在不带js后缀，执行出错node esm必须强制指定，需要想办法解决这个问题：
  * 
- * `import { browser } from "@ts/p2/lib/browser/frontend-application.js"`
+ * `import { browser } from "@gpk/p2/lib/browser/frontend-application.js"`
  * 改成
- * `import { browser } from "@ts/p2/lib/browser/frontend-application"`
+ * `import { browser } from "@gpk/p2/lib/browser/frontend-application"`
  * 
  * 为了解决上面的问题，我们先让tsc build构建相关项目，然后再使用vite二次构建dist内容，最后就可以运行dist内容了
  * 
  */
 
-import { main } from "@ts/p2/lib/browser/frontend-application";
+import { main } from "@gpk/p2/lib/browser/frontend-application";
 
 
 const startBrowser = main;

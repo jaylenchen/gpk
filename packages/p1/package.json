@@ -1,5 +1,5 @@
 {
-  "name": "@ts/p1",
+  "name": "@gpk/p1",
   "type": "module",
   "scripts": {
     "build": "npx tsc -b"

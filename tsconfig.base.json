@@ -3,6 +3,12 @@
     "target": "ESNext",
     "module": "ESNext",
     "esModuleInterop": true,
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@gpk/core/*": [
+        "./packages/core/src/*"
+      ]
+    }
   }
 }

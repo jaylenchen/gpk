@@ -1,5 +1,5 @@
 {
-  "name": "@ts/browser",
+  "name": "@gpk/browser",
   "type": "module",
   "scripts": {
     "clean": "npx tsc --build --clean",
@@ -7,6 +7,6 @@
     "start": "node ./dist/index.js"
   },
   "dependencies": {
-    "@ts/p2": "workspace:*"
+    "@gpk/p2": "workspace:*"
   }
 }

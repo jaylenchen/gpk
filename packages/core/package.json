@@ -1,0 +1,12 @@
+{
+  "name": "@gpk/core",
+  "type": "module",
+  "dependencies": {
+    "inversify": "^6.0.2",
+    "lodash-es": "^4.17.21",
+    "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4"
+  }
+}

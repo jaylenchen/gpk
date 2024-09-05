@@ -9,7 +9,7 @@ export default defineConfig({
     lib: {
       entry: './dist/index.js',
       fileName: 'index',
-      name: "@ts/browser",
+      name: "@gpk/browser",
     },
   },
 });

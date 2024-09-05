@@ -1,5 +1,5 @@
 {
-  "name": "ts-references",
+  "name": "gpk",
   "packageManager": "yarn@4.3.1",
   "devDependencies": {
     "rimraf": "^6.0.1",
@@ -13,8 +13,8 @@
     "apps/*"
   ],
   "scripts": {
-    "clean": "yarn workspace @ts/browser clean && rimraf (apps|packages)/**/(lib|dist)",
-    "build": "yarn workspace @ts/browser build",
-    "start": "yarn workspace @ts/browser start"
+    "clean": "yarn workspace @gpk/browser clean && rimraf (apps|packages)/**/(lib|dist)",
+    "build": "yarn workspace @gpk/browser build",
+    "start": "yarn workspace @gpk/browser start"
   }
 }

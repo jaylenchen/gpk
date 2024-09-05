@@ -370,6 +370,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gpk/browser@workspace:apps/browser":
+  version: 0.0.0-use.local
+  resolution: "@gpk/browser@workspace:apps/browser"
+  dependencies:
+    "@gpk/p2": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@gpk/core@workspace:*, @gpk/core@workspace:packages/core":
+  version: 0.0.0-use.local
+  resolution: "@gpk/core@workspace:packages/core"
+  dependencies:
+    "@types/lodash-es": "npm:^4"
+    inversify: "npm:^6.0.2"
+    lodash-es: "npm:^4.17.21"
+    reflect-metadata: "npm:^0.2.2"
+  languageName: unknown
+  linkType: soft
+
+"@gpk/p1@workspace:*, @gpk/p1@workspace:packages/p1":
+  version: 0.0.0-use.local
+  resolution: "@gpk/p1@workspace:packages/p1"
+  languageName: unknown
+  linkType: soft
+
+"@gpk/p2@workspace:*, @gpk/p2@workspace:packages/p2":
+  version: 0.0.0-use.local
+  resolution: "@gpk/p2@workspace:packages/p2"
+  dependencies:
+    "@gpk/core": "workspace:*"
+    "@gpk/p1": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -659,28 +693,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ts/browser@workspace:apps/browser":
-  version: 0.0.0-use.local
-  resolution: "@ts/browser@workspace:apps/browser"
-  dependencies:
-    "@ts/p2": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
-"@ts/p1@workspace:*, @ts/p1@workspace:packages/p1":
-  version: 0.0.0-use.local
-  resolution: "@ts/p1@workspace:packages/p1"
-  languageName: unknown
-  linkType: soft
-
-"@ts/p2@workspace:*, @ts/p2@workspace:packages/p2":
-  version: 0.0.0-use.local
-  resolution: "@ts/p2@workspace:packages/p2"
-  dependencies:
-    "@ts/p1": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
 "@types/argparse@npm:1.0.38":
   version: 1.0.38
   resolution: "@types/argparse@npm:1.0.38"
@@ -692,6 +704,22 @@ __metadata:
   version: 1.0.5
   resolution: "@types/estree@npm:1.0.5"
   checksum: 10/7de6d928dd4010b0e20c6919e1a6c27b61f8d4567befa89252055fad503d587ecb9a1e3eab1b1901f923964d7019796db810b7fd6430acb26c32866d126fd408
+  languageName: node
+  linkType: hard
+
+"@types/lodash-es@npm:^4":
+  version: 4.17.12
+  resolution: "@types/lodash-es@npm:4.17.12"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10/56b9a433348b11c31051c6fa9028540a033a08fb80b400c589d740446c19444d73b217cf1471d4036448ef686a83e8cf2a35d1fadcb3f2105f26701f94aebb07
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
+  version: 4.17.7
+  resolution: "@types/lodash@npm:4.17.7"
+  checksum: 10/b8177f19cf962414a66989837481b13f546afc2e98e8d465bec59e6ac03a59c584eb7053ce511cde3a09c5f3096d22a5ae22cfb56b23f3b0da75b0743b6b1a44
   languageName: node
   linkType: hard
 
@@ -1401,6 +1429,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gpk@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "gpk@workspace:."
+  dependencies:
+    rimraf: "npm:^6.0.1"
+    tsx: "npm:^4.19.0"
+    typescript: "npm:^5.5.4"
+    vite: "npm:^5.4.3"
+    vite-plugin-dts: "npm:^4.1.0"
+  languageName: unknown
+  linkType: soft
+
 "graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.6":
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
@@ -1487,6 +1527,13 @@ __metadata:
   version: 4.0.0
   resolution: "indent-string@npm:4.0.0"
   checksum: 10/cd3f5cbc9ca2d624c6a1f53f12e6b341659aba0e2d3254ae2b4464aaea8b4294cdb09616abbc59458f980531f2429784ed6a420d48d245bcad0811980c9efae9
+  languageName: node
+  linkType: hard
+
+"inversify@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "inversify@npm:6.0.2"
+  checksum: 10/0e4d07fb2dac82d21f55c711cdf35f9f75656c3f4651b8dd27f5aa3dcb154ad492ebdd0a66fbe394ac090aac0728da999d2a1c7ed62b5d8c772cad06e1684483
   languageName: node
   linkType: hard
 
@@ -1610,6 +1657,13 @@ __metadata:
     mlly: "npm:^1.4.2"
     pkg-types: "npm:^1.0.3"
   checksum: 10/20f4caba50dc6fb00ffcc1a78bc94b5acb33995e0aadf4d4edcdeab257e891aa08f50afddf02f3240b2c3d02432bc2078f2a916a280ed716b64753a3d250db70
+  languageName: node
+  linkType: hard
+
+"lodash-es@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash-es@npm:4.17.21"
+  checksum: 10/03f39878ea1e42b3199bd3f478150ab723f93cc8730ad86fec1f2804f4a07c6e30deaac73cad53a88e9c3db33348bb8ceeb274552390e7a75d7849021c02df43
   languageName: node
   linkType: hard
 
@@ -1989,6 +2043,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"reflect-metadata@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "reflect-metadata@npm:0.2.2"
+  checksum: 10/1c93f9ac790fea1c852fde80c91b2760420069f4862f28e6fae0c00c6937a56508716b0ed2419ab02869dd488d123c4ab92d062ae84e8739ea7417fae10c4745
+  languageName: node
+  linkType: hard
+
 "require-from-string@npm:^2.0.2":
   version: 2.0.2
   resolution: "require-from-string@npm:2.0.2"
@@ -2316,18 +2377,6 @@ __metadata:
   checksum: 10/be2de62fe58ead94e3e592680052683b1ec986c72d589e7b21e5697f8744cdbf48c266fa72f6c15932894c10187b5f54573a3bcf7da0bfd964d5caf23d436168
   languageName: node
   linkType: hard
-
-"ts-references@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "ts-references@workspace:."
-  dependencies:
-    rimraf: "npm:^6.0.1"
-    tsx: "npm:^4.19.0"
-    typescript: "npm:^5.5.4"
-    vite: "npm:^5.4.3"
-    vite-plugin-dts: "npm:^4.1.0"
-  languageName: unknown
-  linkType: soft
 
 "tsx@npm:^4.19.0":
   version: 4.19.0
