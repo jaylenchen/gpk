@@ -3,9 +3,14 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "lib",
-    "rootDir": "src",
+    "rootDir": "src"
   },
   "include": [
     "src"
+  ],
+  "references": [
+    {
+      "path": "../core"
+    }
   ]
 }

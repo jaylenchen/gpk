@@ -424,6 +424,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@gpk/browser@workspace:apps/browser"
   dependencies:
+    "@gpk/console": "workspace:*"
+    "@gpk/core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@gpk/console@workspace:*, @gpk/console@workspace:packages/console":
+  version: 0.0.0-use.local
+  resolution: "@gpk/console@workspace:packages/console"
+  dependencies:
     "@gpk/core": "workspace:*"
   languageName: unknown
   linkType: soft

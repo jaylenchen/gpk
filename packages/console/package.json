@@ -1,6 +1,9 @@
 {
-  "name": "@gpk/p1",
+  "name": "@gpk/console",
   "type": "module",
+  "dependencies": {
+    "@gpk/core": "workspace:*"
+  },
   "scripts": {
     "build": "npx tsc -b",
     "postbuild": "npx tsc-alias"

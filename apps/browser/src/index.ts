@@ -4,6 +4,7 @@
  * 但是，这个不是我们想要的结果，因为我们想要的是在不带后缀名的情况下也能正常导入，
  * 现在不带js后缀，执行出错node esm必须强制指定，需要想办法解决这个问题：
  * 
+ * 
  * `import { browser } from "@gpk/p2/lib/browser/frontend-application.js"`
  * 改成
  * `import { browser } from "@gpk/p2/lib/browser/frontend-application"`
@@ -12,21 +13,22 @@
  * 
  */
 import 'reflect-metadata'
-import { IFrontendApplication } from '@gpk/core/lib/browser/frontend-application/frontend-application';
 
 async function startFrontendApplication() {
-  const { Container } = await import("@gpk/core/lib/common/instantiation")
-  const frontendApplicationModule = (await import("@gpk/core/lib/browser/frontend-application/frontend-application-module")).default
-  const { _IFrontendApplication } = await import('@gpk/core/lib/browser/frontend-application/frontend-application')
-
+  const { Container } = await import("@gpk/core/lib/common/instantiation");
   const container = new Container();
 
-  container.load(frontendApplicationModule)
+  const frontendApplicationModule = (await import("@gpk/core/lib/browser/frontend-application/frontend-application-module")).default;
+  const consoleModule = (await import('@gpk/console/lib/browser/console-frontend-module')).default;
 
-  const frontendApplication = container.get<IFrontendApplication>(_IFrontendApplication)
+  const { FrontendApplication } = await import('@gpk/core/lib/browser/frontend-application/frontend-application');
 
-  frontendApplication.start()
+  container.load(frontendApplicationModule);
+  container.load(consoleModule);
+
+  const frontendApplication = container.get(FrontendApplication);
+
+  frontendApplication.start();
 }
 
-
-startFrontendApplication()
+startFrontendApplication();

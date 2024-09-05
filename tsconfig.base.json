@@ -11,11 +11,8 @@
       "@gpk/core/*": [
         "./packages/core/src/*"
       ],
-      "@gpk/p1/*": [
-        "./packages/p1/src/*"
-      ],
-      "@gpk/p2/*": [
-        "./packages/p2/src/*"
+      "@gpk/console/*": [
+        "./packages/console/src/*"
       ]
     }
   }

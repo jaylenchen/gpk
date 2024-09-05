@@ -1,13 +1,7 @@
 import { IFrontendApplicationContribution } from '@gpk/core/browser/frontend-application/frontend-application-contribution-point';
-import { createServiceIdentifier, optional } from '@gpk/core/common/instantiation';
+import { optional } from '@gpk/core/common/instantiation';
 
-export const _IFrontendApplication = Symbol.for('FrontendApplication');
-export const IFrontendApplication = createServiceIdentifier<IFrontendApplication>(_IFrontendApplication);
-export interface IFrontendApplication {
-  start(): void
-}
-
-export class FrontendApplication implements IFrontendApplication {
+export class FrontendApplication {
   constructor(
     @optional() @IFrontendApplicationContribution private readonly contributions: IFrontendApplicationContribution[],
   ) { }
