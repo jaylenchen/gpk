@@ -3,10 +3,10 @@
   "type": "module",
   "scripts": {
     "clean": "npx tsc --build --clean",
-    "build": "npx tsc --build && npx vite build",
+    "build": "npx tsc --build && npx lerna run postbuild && npx vite build",
     "start": "node ./dist/index.js"
   },
   "dependencies": {
-    "@gpk/p2": "workspace:*"
+    "@gpk/core": "workspace:*"
   }
 }

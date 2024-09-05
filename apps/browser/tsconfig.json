@@ -10,7 +10,7 @@
   ],
   "references": [
     {
-      "path": "../../packages/p2"
+      "path": "../../packages/core"
     }
   ]
 }

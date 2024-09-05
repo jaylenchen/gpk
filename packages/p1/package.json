@@ -2,6 +2,7 @@
   "name": "@gpk/p1",
   "type": "module",
   "scripts": {
-    "build": "npx tsc -b"
+    "build": "npx tsc -b",
+    "postbuild": "npx tsc-alias"
   }
 }

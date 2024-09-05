@@ -1,9 +1,6 @@
 {
   "name": "@gpk/p2",
   "type": "module",
-  "scripts": {
-    "build": "npx tsc -b"
-  },
   "dependencies": {
     "@gpk/core": "workspace:*",
     "@gpk/p1": "workspace:*"
@@ -11,5 +8,9 @@
   "files": [
     "lib",
     "src"
-  ]
+  ],
+  "scripts": {
+    "build": "npx tsc -b",
+    "postbuild": "npx tsc-alias"
+  }
 }

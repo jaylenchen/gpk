@@ -11,10 +11,22 @@
  * 为了解决上面的问题，我们先让tsc build构建相关项目，然后再使用vite二次构建dist内容，最后就可以运行dist内容了
  * 
  */
+import 'reflect-metadata'
+import { IFrontendApplication } from '@gpk/core/lib/browser/frontend-application/frontend-application';
 
-import { main } from "@gpk/p2/lib/browser/frontend-application";
+async function startFrontendApplication() {
+  const { Container } = await import("@gpk/core/lib/common/instantiation")
+  const frontendApplicationModule = (await import("@gpk/core/lib/browser/frontend-application/frontend-application-module")).default
+  const { _IFrontendApplication } = await import('@gpk/core/lib/browser/frontend-application/frontend-application')
+
+  const container = new Container();
+
+  container.load(frontendApplicationModule)
+
+  const frontendApplication = container.get<IFrontendApplication>(_IFrontendApplication)
+
+  frontendApplication.start()
+}
 
 
-const startBrowser = main;
-
-startBrowser();
+startFrontendApplication()
