@@ -2,6 +2,7 @@
   "name": "ts-references",
   "packageManager": "yarn@4.3.1",
   "devDependencies": {
+    "rimraf": "^6.0.1",
     "tsx": "^4.19.0",
     "typescript": "^5.5.4",
     "vite": "^5.4.3",
@@ -10,5 +11,10 @@
   "workspaces": [
     "packages/*",
     "apps/*"
-  ]
+  ],
+  "scripts": {
+    "clean": "yarn workspace @ts/browser clean && rimraf (apps|packages)/**/(lib|dist)",
+    "build": "yarn workspace @ts/browser build",
+    "start": "yarn workspace @ts/browser start"
+  }
 }
