@@ -55,4 +55,4 @@ Theia的contribution机制技术上实际就是一个extension包提供给外部
 
 ## JSON-RPC
 
-相关技术原理正在啃...
+![img](./json-rpc.png)
