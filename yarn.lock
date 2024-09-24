@@ -448,18 +448,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@gpk/p1@workspace:*, @gpk/p1@workspace:packages/p1":
+"@gpk/plugin-ext@workspace:packages/plugin-ext":
   version: 0.0.0-use.local
-  resolution: "@gpk/p1@workspace:packages/p1"
-  languageName: unknown
-  linkType: soft
-
-"@gpk/p2@workspace:packages/p2":
-  version: 0.0.0-use.local
-  resolution: "@gpk/p2@workspace:packages/p2"
+  resolution: "@gpk/plugin-ext@workspace:packages/plugin-ext"
   dependencies:
     "@gpk/core": "workspace:*"
-    "@gpk/p1": "workspace:*"
   languageName: unknown
   linkType: soft
 

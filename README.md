@@ -1,5 +1,7 @@
 # gpk
 
+![img](./architecture.png)
+
 针对[Theia](https://github.com/eclipse-theia/theia)中基于`references`等tsconfig配置去进行的相关extension包的构建和源码维护的探索。
 （ps：探究的背景是为了我正在开发的gepick上升一个纬度，朝着成为类似于theia的二次开发的平台方向演进）
 
@@ -56,3 +58,109 @@ Theia的contribution机制技术上实际就是一个extension包提供给外部
 ## JSON-RPC
 
 ![img](./json-rpc.png)
+
+## plugin机制
+
+在Theia中支持了运行时动态加载的plugin。用户可以在插件市场点击下载自己希望使用的插件，等待插件下载完毕之后就能够使用该插件的功能了。动态加载plugin的关键技术点就是利用了require()或者是import()，它允许你运行时加载某一个模块。
+
+### 动态加载plugin设计
+
+#### 后端部分
+
+- contribution initialize阶段
+  - backend application initialze初始化的时候，调动PluginDeployerContribution初始化，并启动pluginDeployer。这一个环节做的事情就是“解析插件”和“部署插件”。
+  - 对于插件部署这件事，实际上就是读取插件的相关元信息，以及类型。一个已部署的插件是这么做的，就是定义一个变量并设置到deployedPlugins中而已：`const deployed: DeployedPlugin = { metadata, type }; deployedPlugins.set(id, deployed);`，这些逻辑都放在`HostedPluginDeployerHandler`类中。
+- contribution onStart阶段
+  - backend application start启动的时候，调动`HeadlessHostedPluginSupport`启动，并调用所继承的父类`AbstractHostedPluginSupport`的`load`方法。这一个环节做的事情就是“同步插件”、“加载插件”、“启动插件”。
+  - 对于同步插件`syncPlugins`这件事，实际上内部会尝试启动plugin host子进程（不过debug发现这一端没有fork子进程）。关键的逻辑是`const deployedPlugins = await this.server.getDeployedPlugins({ pluginIds: newPluginIds });`，这个`getDeployedPlugins`方法的主要作用是获取一组已部署的插件，并对这些插件进行本地化处理。整体来说，对于`syncPlugins`来说主要功能是同步插件的状态，确保已部署的插件被正确加载，未部署的插件被卸载，并且在此过程中记录相关的测量数据。
+
+#### 前端部分
+
+- contribution start阶段
+  - MyBrowserHostedPluginSupport start调用启动了HostedPluginSupport onStart方法启动插件功能，并调用所继承的父类`AbstractHostedPluginSupport`的`load`方法。这一个环节做的事情就是“同步插件”、“加载插件”、“启动插件”。接下来跟backend端完全一样。
+  - 对于同步插件`syncPlugins`这件事，内部会fork出plugin host子进程（这里启动了一个plugin host子进程后端）。
+    - 对于fork出子进程，执行入口是`packages/plugin-ext/src/hosted/node/plugin-host.ts`。同样也是创建一个ioc container，load pluginHostModule加载plugin host模块。在`plugin-host`内容里头会获取`PluginHostRPC`，在获取的时候触发继承`AbstractPluginHostRPC`类的`initialize`方法（因为它用了inversify的postConstruct装饰器）。
+  - 对于启动插件`startPlugins`这件事，实际上是通过plugin manager这个部分来实现的。而在前端其实拿到的plugin manager是一个rpc代理对象，它可以调用实际上位于`packages/plugin-ext/src/plugin/plugin-manager.ts`这个模块中的`PluginManagerExtImpl`的相关方法。相关方法的接口定义是位于`packages/plugin-ext/src/common/plugin-api-rpc.ts`的`AbstractPluginManagerExt`
+
+    ```typescript
+      export interface AbstractPluginManagerExt<P extends Record<string, any>> {
+        /** initialize the manager, should be called only once */
+        $init(params: P): Promise<void>;
+
+        /** load and activate plugins */
+        $start(params: PluginManagerStartParams): Promise<void>;
+
+        /** deactivate the plugin */
+        $stop(pluginId: string): Promise<void>;
+
+        /** deactivate all plugins */
+        $stop(): Promise<void>;
+
+        $updateStoragePath(path: string | undefined): Promise<void>;
+
+        $activateByEvent(event: string): Promise<void>;
+
+        $activatePlugin(id: string): Promise<void>;
+
+    }
+    ```
+
+    而实际上在`startPlugins`有段关键逻辑是`this.handlePluginStarted(manager, plugin);`，其实际上调用的是位于`packages/plugin-ext/src/hosted/browser/hosted-plugin.ts`的`HostedPluginSupport`类的`activateByWorkspaceContains`方法。在`activateByWorkspaceContains`方法中关键的逻辑是
+
+    ```typescript
+      const activatePlugin = () => {
+            return manager.$activateByEvent(`onPlugin:${plugin.metadata.model.id}`)
+    };
+    ```
+
+    接着其实`manager.$activateByEvent`内部其实是寻找event对应的所有activation，而activation的定义其实就是调用了`manager.$activatePlugin`方法。
+    我们进去看`manager.$activatePlugin`方法的定义：
+
+    ```typescript
+     async $activatePlugin(id: string): Promise<void> {
+        const plugin = this.registry.get(id);
+        if (plugin && this.configStorage) {
+            await this.loadPlugin(plugin, this.configStorage);
+        }
+    }
+    ```
+
+    继续深挖`this.loadPlugin`方法，会找到很关键的一段逻辑:
+
+    ```typescript
+      let pluginMain = this.host.loadPlugin(plugin);
+      pluginMain = pluginMain || {};
+      await this.startPlugin(plugin, configStorage, pluginMain);
+    ```
+
+    在这里头`this.host`就是我们之前提到的位于`packages/plugin-ext/src/hosted/node/plugin-host-rpc.ts`的`AbstractPluginHostRPC`的`createPluginHost`方法创建出来的host对象。我们看看`loadPlugin`方法
+
+    ```typescript
+    loadPlugin(plugin: Plugin): any {
+        removeFromCache(mod => mod.id.startsWith(plugin.pluginFolder));
+        if (plugin.pluginPath) {
+              return dynamicRequire(plugin.pluginPath);
+        }
+    },
+    ```
+
+    这里我们发现关键的部分就是`dynamicRequire(plugin.pluginPath)`，这个就是整个动态加载plugin的核心地方。它会将一个plugin模块导入，结果就是上面的`pluginMain`，这个对象实际上就是对应用户plugin模块向外导出的`activate`和`deactivate`方法的模块对象。
+    激活插件的逻辑如下
+
+    ```typescript
+    if (typeof pluginMain[plugin.lifecycle.startMethod] === 'function') {
+            await this.localization.initializeLocalizedMessages(plugin, this.envExt.language);
+            const pluginExport = await pluginMain[plugin.lifecycle.startMethod].apply(getGlobal(), [pluginContext]);
+            this.activatedPlugins.set(plugin.model.id, new ActivatedPlugin(pluginContext, pluginExport, stopFn));
+    }
+    ```
+
+    这里的`plugin.lifecycle.startMethod`其实就是`activate`。通过这种方式，我们将用户开发的Plugin和Theia连接起来了，相关pluginContext上下文会在这个地方传递给用户Plugin。
+    简而言之，在`startPlugins`中一次性将manager的$init，$start，$activateByEvent，$activatePlugin方法一次性调用了。
+
+#### 插件市场设计
+
+- 前端提供一个插件市场，让用户能够浏览不同的插件，选择自己希望的插件下载。
+- 用户点击插件下载后，拉取对应的插件包，将其部署到本地，以提供使用。
+- 使用动态加载机制将插件包主模块加载到应用当中。
+- 执行起插件包主模块，调用插件的激活方法activate激活该插件。

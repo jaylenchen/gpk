@@ -13,6 +13,9 @@
       ],
       "@gpk/console/*": [
         "./packages/console/src/*"
+      ],
+      "@gpk/plugin-ext/*": [
+        "./packages/plugin-ext/src/*"
       ]
     }
   }
