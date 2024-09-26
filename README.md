@@ -129,7 +129,7 @@ async function start(port, host, argv = process.argv) {
 }
 ```
 
-在`start`函数逻辑运行时，最终可以看到运行的是` container.get(BackendApplication).start(port, host)`。实际上也就是利用`ioc container`创建并获取文件`packages/core/src/node/backend-application.ts`中`BackendApplication`类的实例。在这里由于`BackendApplication`类定义对于`init`方法使用了`postConstruct`装饰器，它的作用是在`ioc container`创建出类实例后调用起来。因此，我们应该将` container.get(BackendApplication).start(port, host)`拆分成两部分来看`const app = container.get(BackendApplication)`和`app.start(port,host)`。前半部分`const app = container.get(BackendApplication)`将创建`BackendApplication`实例，并调用`BackendApplication`实例的`init`方法，后半部分会调用`BackendApplication`实例的`start`方法。
+在`start`函数逻辑运行时，最终可以看到运行的是`container.get(BackendApplication).start(port, host)`。实际上也就是利用`ioc container`创建并获取文件`packages/core/src/node/backend-application.ts`中`BackendApplication`类的实例。在这里由于`BackendApplication`类定义对于`init`方法使用了`postConstruct`装饰器，它的作用是在`ioc container`创建出类实例后调用起来。因此，我们应该将`container.get(BackendApplication).start(port, host)`拆分成两部分来看`const app = container.get(BackendApplication)`和`app.start(port,host)`。前半部分`const app = container.get(BackendApplication)`将创建`BackendApplication`实例，并调用`BackendApplication`实例的`init`方法，后半部分会调用`BackendApplication`实例的`start`方法。
 
 一个`BackendApplication`会有很多`Contribution`。在目前我所调试的版本中，总共有下面这些`Contribution`：
 
@@ -158,6 +158,7 @@ async function start(port, host, argv = process.argv) {
 | 20      | `Object`                                | `undefined`                                                  | ``                     |
 | 21      | `ProcessManager`                        | `packages/process/src/node/process-manager.ts`               | ``                     |
 | 22      | `TaskManager`                           | `packages/task/src/node/task-manager.ts`                     | ``                     |
+
 #### BackendApplication 初始化阶段
 
 在执行`BackendApplication`的`init`方法时，内部的关键一段逻辑是:
@@ -166,7 +167,7 @@ async function start(port, host, argv = process.argv) {
 const contributions = this.contributionsProvider.getContributions()
 
 await Promise.all(contributions.map(async contribution => {
- 	if (contribution.initialize) {
+  if (contribution.initialize) {
     try {
        contribution.initialize!()
      } catch (error) {
@@ -193,7 +194,7 @@ await Promise.all(contributions.map(async contribution => {
 
 ```ts
 initialize(): Promise<void> {
-	// 这里注入的是packages/plugin-ext/src/main/node/plugin-deployer-impl.ts
+ // 这里注入的是packages/plugin-ext/src/main/node/plugin-deployer-impl.ts
   this.pluginDeployer.start().catch(error => this.logger.error('Initializing plugin deployer failed.', error));
   return Promise.resolve();
 }
@@ -211,7 +212,7 @@ protected async doStart(): Promise<void> {
     const pluginsValue = process.env.THEIA_PLUGINS || undefined;
     // 拿到插件目录，比如这里就是整个根目录中的plugins目录
     // 这个插件目录可以在命令后启动后端app的时候，通过--plugins参数指定
-		// 比如：yarn theia start --plugins=/Users/work/Third-Projects/theia/plugins
+  // 比如：yarn theia start --plugins=/Users/work/Third-Projects/theia/plugins
     const defaultPluginsValueViaCli = this.cliContribution.localDir();
     const defaultPluginIdList = defaultPluginsValue ? defaultPluginsValue.split(',') : [];
     const pluginIdList = pluginsValue ? pluginsValue.split(',') : [];
@@ -254,8 +255,6 @@ protected async doStart(): Promise<void> {
 >
 > 对于插件部署这件事，实际上就是读取插件的相关元信息，以及类型。一个已部署的插件是这么做的，定义一个变量并设置到`deployedPlugins`中而已：`const deployed: DeployedPlugin = { metadata, type }; deployedPlugins.set(id, deployed);`，这些逻辑都放在`HostedPluginDeployerHandler`类中，该类位于`packages/plugin-ext/src/hosted/node/hosted-plugin-deployer-handler.ts`文件中。
 
-
-
 #### BackendApplication 启动阶段
 
 在执行`BackendApplication`的`start`方法时，内部的关键一段逻辑是:
@@ -267,7 +266,7 @@ protected async doStart(): Promise<void> {
    if (contribution.onStart) {
       try {
             await this.measure(contribution.constructor.name + '.onStart',
-            	() => contribution.onStart!(server)
+             () => contribution.onStart!(server)
             );
           } catch (error) {
             console.error('Could not start contribution', error);
@@ -319,7 +318,7 @@ bind(BackendApplicationContribution).toDynamicValue(({ container }) => {
 });
 ```
 
-这里边最关键的部分是` hostedPluginSupport.onStart(headlessPluginsContainer)`，`hostedPluginSupport`是`HeadlessHostedPluginSupport`创建的实例，而`HeadlessHostedPluginSupport`位于`packages/plugin-ext-headless/src/hosted/node/headless-hosted-plugin.ts`文件中。而`HeadlessHostedPluginSupport`又是继承自`AbstractHostedPluginSupport`，它位于`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`文件中。`onStart`方法正是定义在它身上的：
+这里边最关键的部分是`hostedPluginSupport.onStart(headlessPluginsContainer)`，`hostedPluginSupport`是`HeadlessHostedPluginSupport`创建的实例，而`HeadlessHostedPluginSupport`位于`packages/plugin-ext-headless/src/hosted/node/headless-hosted-plugin.ts`文件中。而`HeadlessHostedPluginSupport`又是继承自`AbstractHostedPluginSupport`，它位于`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`文件中。`onStart`方法正是定义在它身上的：
 
 ```ts
  onStart(container: interfaces.Container): void {
@@ -368,7 +367,7 @@ function start() {
 
    (window['theia'] = window['theia'] || {}).container = container;
 
-		return container.get(FrontendApplication).start();
+  return container.get(FrontendApplication).start();
 
 }
 ```
@@ -483,6 +482,7 @@ protected async startContributions(): Promise<void> {
 | 65      | `PluginIconService`                       | `packages/plugin-ext/src/main/browser/plugin-icon-service.ts` | ``                      |
 | 66      | `VSXExtensionsContribution`               | `packages/vsx-registry/src/browser/vsx-extensions-contribution.ts` | ``                      |
 | 67      | `DebugFrontendContribution`               | `packages/memory-inspector/src/browser/memory-inspector-frontend-contribution.ts` | ``                      |
+
 #### FrontendApplication 启动阶段
 
 和后端服务不同，在前端应用启动的时候，才会一次性将`Contribution`的`initialize`、`configure`、`onStart`方法分别调用起来。
@@ -621,6 +621,60 @@ protected async doLoad(): Promise<void> {
 
 事实上，通过`debug`前端`MyBrowserHostedPluginSupport`这个`Contribution`的时候，我们发现在同步插件这一环节里头会让后端主进程`fork`出一个子进程，名字就叫做`plugin-host`。因此，我们有必要看下同步插件这个环节是如何做到让后端主进程`fork`出`plugin-host`子进程的。
 
+我们回顾下前端应用`FrontendApplication`启动时，是如何到达同步插件这一个环节的：
+
+- `FrontendApplication start`方法执行 [文件位置：`packages/core/src/browser/frontend-application.ts`]
+
+- 触发`FrontendApplication Contribution onStart`方法执行 [文件位置：`packages/core/src/browser/frontend-application.ts`]
+
+  - 触发`MyBrowserHostedPluginSupport`这个`FrontendApplicationContribution`的`onStart`方法执行 [文件位置：`packages/plugin-ext/src/main/browser/plugin-ext-frontend-module.ts`]
+
+  - 触发`HostedPluginSupport`的`onStart`方法执行 [文件位置：`packages/plugin-ext/src/hosted/browser/hosted-plugin.ts`]
+
+  - 由于`HostedPluginSupport`继承自`AbstractHostedPluginSupport`，`onStart`就是定义在`AbstractHostedPluginSupport`上的，所以触发`AbstractHostedPluginSupport`的`onStart`方法执行 [文件位置：`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`]
+
+    - 触发`AbstractHostedPluginSupport`的`load`方法执行 [文件位置：`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`]
+
+    - 触发`AbstractHostedPluginSupport`的`doLoad`方法执行 [文件位置：`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`]
+
+    - 触发`AbstractHostedPluginSupport`的`syncPlugins`方法执行 [文件位置：`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`]
+
+      - **前端处理部分[入口文件位置：`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`]**：在`syncPlugins`过程中，会调用`this.server.getDeployedPluginIds()`，这里的`this.server`实际上是一个接口类型为`HPS`(类型定义为`HPS extends HostedPluginServer | RpcProxy<HostedPluginServer>`)的`rpc`代理对象。它允许你使用`HPS`接口所定义的`API`。``this.server.getDeployedPluginIds()`调用的结果就是发送`rpc`请求给后端对应`rpc`请求处理对象去处理这件`getDeployedPluginIds`事。
+      - **后端处理部分[入口文件位置：`packages/plugin-ext/src/hosted/node/plugin-service.ts`]**：前端既然发送了`rpc`请求过来处理`getDeployedPluginIds`这件事，后端就会使用`HostedPluginServerImpl`类实例去处理这件事。我们可以在`HostedPluginServerImpl`类中找到对应的同名方法`getDeployedPluginIds`。在`getDeployedPluginIds`过程中，会调用` this.hostedPlugin.runPluginServer(serverName)`。
+
+    - 触发`HostedPluginSupport`的`runPluginServer`方法执行 [文件位置：`packages/plugin-ext/src/hosted/node/hosted-plugin.ts`]
+
+      - 触发`HostedPluginProcess`的`runPluginServer`方法执行 [文件位置：`packages/plugin-ext/src/hosted/node/hosted-plugin-process.ts`]
+
+      - 触发`HostedPluginProcess`的`fork`方法执行 [文件位置：`packages/plugin-ext/src/hosted/node/hosted-plugin-process.ts`]
+
+        - 触发`node`的`child_process`模块的`fork`方法执行，具体代码大致是这样
+
+          ```ts
+          import * as cp from "child_process"
+          
+          const childProcess = cp.fork(this.configuration.path, options.args, forkOptions);
+          ```
+
+          这里子进程的入口就是`this.configuration.path`。经过`debug`调试，我们发现`this.configuration.path`实际上的源码文件是`packages/plugin-ext/src/hosted/node/plugin-host.ts`，即该文件是子进程执行的入口。文件关键内容如下：
+
+          ```ts
+          import '@theia/core/shared/reflect-metadata';
+          import { Container } from '@theia/core/shared/inversify';
+          import { ConnectionClosedError, RPCProtocol } from '../../common/rpc-protocol';
+          import { ProcessTerminatedMessage, ProcessTerminateMessage } from './hosted-plugin-protocol';
+          import { PluginHostRPC } from './plugin-host-rpc';
+          import pluginHostModule from './plugin-host-module';
+          
+          
+          const container = new Container();
+          container.load(pluginHostModule);
+          const rpc: RPCProtocol = container.get(RPCProtocol);
+          const pluginHostRPC = container.get(PluginHostRPC);
+          ```
+
+          
+
 ...未完待续
 
 > [!WARNING]
@@ -709,7 +763,6 @@ protected async doLoad(): Promise<void> {
   这里的`plugin.lifecycle.startMethod`其实就是`activate`。通过这种方式，我们将用户开发的Plugin和Theia连接起来了，相关pluginContext上下文会在这个地方传递给用户Plugin。
   简而言之，在`startPlugins`中一次性将manager的$init，$start，$activateByEvent，$activatePlugin方法一次性调用了。
 
-
 #### 插件市场设计
 
 - 前端提供一个插件市场，让用户能够浏览不同的插件，选择自己希望的插件下载。
@@ -731,5 +784,4 @@ protected async doLoad(): Promise<void> {
    插件可以通过 theia.languages 模块注册各种提供者，这些提供者会在用户执行相应命令时被调用。例如，当用户执行“转到定义”命令时，定义提供者会被调用以提供符号的定义位置。
    以下是一些相关代码片段，展示了如何注册和使用这些提供者
 
-> 
-
+>
