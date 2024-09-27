@@ -1,4 +1,17 @@
-# gpk
+<div align='center'>
+
+<br />
+
+<img src='https://raw.githubusercontent.com/jaylenchan/gpk/main/logo/gepick.svg?sanitize=true' alt='gepick-logo' width='160px' />
+
+<h1>Gpk</h1>
+<h2>探索IDE开发框架-Theia</h2>
+
+<hr />
+
+</div>
+
+# 描述
 
 ![img](./architecture.png)
 
@@ -640,7 +653,7 @@ protected async doLoad(): Promise<void> {
     - 触发`AbstractHostedPluginSupport`的`syncPlugins`方法执行 [文件位置：`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`]
 
       - **前端处理部分[入口文件位置：`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`]**：在`syncPlugins`过程中，会调用`this.server.getDeployedPluginIds()`，这里的`this.server`实际上是一个接口类型为`HPS`(类型定义为`HPS extends HostedPluginServer | RpcProxy<HostedPluginServer>`)的`rpc`代理对象。它允许你使用`HPS`接口所定义的`API`。``this.server.getDeployedPluginIds()`调用的结果就是发送`rpc`请求给后端对应`rpc`请求处理对象去处理这件`getDeployedPluginIds`事。
-      - **后端处理部分[入口文件位置：`packages/plugin-ext/src/hosted/node/plugin-service.ts`]**：前端既然发送了`rpc`请求过来处理`getDeployedPluginIds`这件事，后端就会使用`HostedPluginServerImpl`类实例去处理这件事。我们可以在`HostedPluginServerImpl`类中找到对应的同名方法`getDeployedPluginIds`。在`getDeployedPluginIds`过程中，会调用` this.hostedPlugin.runPluginServer(serverName)`。
+      - **后端处理部分[入口文件位置：`packages/plugin-ext/src/hosted/node/plugin-service.ts`]**：前端既然发送了`rpc`请求过来处理`getDeployedPluginIds`这件事，后端就会使用`HostedPluginServerImpl`类实例去处理这件事。我们可以在`HostedPluginServerImpl`类中找到对应的同名方法`getDeployedPluginIds`。在`getDeployedPluginIds`过程中，会调用`this.hostedPlugin.runPluginServer(serverName)`。
 
     - 触发`HostedPluginSupport`的`runPluginServer`方法执行 [文件位置：`packages/plugin-ext/src/hosted/node/hosted-plugin.ts`]
 
@@ -672,8 +685,6 @@ protected async doLoad(): Promise<void> {
           const rpc: RPCProtocol = container.get(RPCProtocol);
           const pluginHostRPC = container.get(PluginHostRPC);
           ```
-
-          
 
 ...未完待续
 
