@@ -686,6 +686,179 @@ protected async doLoad(): Promise<void> {
           const pluginHostRPC = container.get(PluginHostRPC);
           ```
 
+#### plugin host初始化
+
+在文件位置`packages/plugin-ext/src/hosted/node/plugin-host-rpc.ts`的`AbstractPluginHostRPC`定义了`createPluginHost`方法，该方法执行后会返回`PluginHost`对象。
+
+`PluginHost`对象中定义了`init`方法用于自身的初始化，在`init`方法中关键的内容如下：
+
+```ts
+async init(raw: PluginMetadata[]): Promise<[Plugin[], Plugin[]]> {
+    const result: Plugin[] = [];
+    const foreign: Plugin[] = [];
+
+    for (const plg of raw) {
+        try {
+            const pluginModel = plg.model;
+            const pluginLifecycle = plg.lifecycle;
+
+            const rawModel = await loadManifest(pluginModel.packagePath);
+            rawModel.packagePath = pluginModel.packagePath;
+          
+            if (pluginModel.entryPoint!.frontend) {
+                foreign.push({
+                    pluginPath: pluginModel.entryPoint.frontend!,
+                    pluginFolder: pluginModel.packagePath,
+                    pluginUri: pluginModel.packageUri,
+                    model: pluginModel,
+                    lifecycle: pluginLifecycle,
+                    rawModel,
+                    isUnderDevelopment: !!plg.isUnderDevelopment
+                });
+            } else {
+                // Headless and backend plugins are, for now, very similar
+                let backendInitPath = pluginLifecycle.backendInitPath;
+                // if no init path, try to init as regular Theia plugin
+                if (!backendInitPath && self.backendInitPath) {
+                    backendInitPath = __dirname + self.backendInitPath;
+                }
+
+                const pluginPath = self.getBackendPluginPath(pluginModel);
+                const plugin: Plugin = {
+                    pluginPath,
+                    pluginFolder: pluginModel.packagePath,
+                    pluginUri: pluginModel.packageUri,
+                    model: pluginModel,
+                    lifecycle: pluginLifecycle,
+                    rawModel,
+                    isUnderDevelopment: !!plg.isUnderDevelopment
+                };
+
+                if (backendInitPath) {
+                    self.initContext(backendInitPath, plugin);
+                } 
+              
+                result.push(plugin);
+            }
+        } catch (e) {
+            console.error(self.banner, `Failed to initialize ${plg.model.id} plugin.`, e);
+        }
+    }
+    return [result, foreign];
+}
+```
+
+在`init`方法这段关键内容中有一段代码比较重要，就是`self.initContext(backendInitPath, plugin)`，这段代码被用来初始化插件后端上下文。这其中`initContext`方法其实是被定义在`AbstractPluginHostRPC`上的，来看下`initContext`方法的关键定义：
+
+```ts
+initContext(contextPath: string, plugin: Plugin): void {
+    try {
+        const backendInit = dynamicRequire(contextPath);
+        backendInit.doInitialization(this.apiFactory, plugin);
+    } catch (e) {
+        console.error(e);
+    }
+}
+```
+
+通过阅读`initContext`定义，我们发现实际上`self.initContext(backendInitPath, plugin)`执行的效果就是：
+
+- 类似`require("xxx")`正常引入模块的方式引入`backendInitPath`模块
+- 引入`backendInitPath`模块后，调用该模块的`doInitialization`方法初始化插件后端
+
+这样就完成了`plugin`的后端初始化工作。
+
+为了更进一步了解`plugin`后端初始化的具体过程，我们看看初始化流程的代码`dynamicRequire(contextPath)`到底是个什么东西？
+
+通过`debug Browser Backend `，我们发现实际上`dynamicRequire(contextPath)`的`contextpath`可能的文件模块有两个：
+
+- `packages/plugin-ext/src/hosted/node/scanners/backend-init-theia.ts`，用于`theia plugin`
+- `packages/plugin-ext-vscode/src/node/plugin-vscode-init.ts`，用于`vscode plugin`
+
+为了深入了解初始化过程，我们进一步选取`packages/plugin-ext-vscode/src/node/plugin-vscode-init.ts`作为例子探究。由于`initContext`的过程先引入了`packages/plugin-ext-vscode/src/node/plugin-vscode-init.ts`所代表的模块，接着调用`doInitialization`函数。我们看下`doInitialization`的关键定义：
+
+```ts
+export const doInitialization: BackendInitializationFn = (apiFactory: PluginAPIFactory, plugin: Plugin) => {
+    const apiImpl = apiFactory(plugin);
+    pluginsApiImpl.set(plugin.model.id, apiImpl);
+
+    plugins.push(plugin);
+    pluginApiFactory = apiFactory;
+
+    if (!isLoadOverride) {
+        overrideInternalLoad();
+    }
+};
+```
+
+梳理下`doInitialization`关键逻辑就是：
+
+- 创建出当前`plugin`对应的`plugin api`实现
+- 重写`node module`模块的`_load`方法（也就是你平时使用的`require("xxx")`的内部逻辑被重写了）
+
+我们主要关注下`overrideInternalLoad()`，进一步看下`overrideInternalLoad`的定义：
+
+```ts
+function overrideInternalLoad(): void {
+    const module = require('module');
+    const vscodeModuleName = 'vscode';
+    const internalLoad = module._load;
+  
+    module._load = function (request: string, parent: any, isMain: {}): any {
+        if (request !== vscodeModuleName) {
+            return internalLoad.apply(this, arguments);
+        }
+
+        const plugin = findPlugin(parent.filename);
+        if (plugin) {
+            const apiImpl = pluginsApiImpl.get(plugin.model.id);
+ 
+            return apiImpl;
+        }
+
+        if (!defaultApi) {
+            defaultApi = createVSCodeAPI(pluginApiFactory, emptyPlugin);
+        }
+
+        return defaultApi;
+    };
+}
+```
+
+梳理下`overrideInternalLoad`关键逻辑就是：
+
+- 保存原始`module._load`方法到`internalLoad`
+- 重写`module._load`方法（在内部根据导入模块的名字做判断，专门针对`vscode`模块做处理，即`import * as vscode from"vscode"`的时候，模块内部会针对此做返回值处理。而其他的普通模块正常返回）
+
+> [!NOTE]
+>
+> 这里只是描述`vscode plugin`的初始化行为，对于`theia plugin`，其实也是类似的。比如`overrideInternalLoad`，在`packages/plugin-ext/src/hosted/node/scanners/backend-init-theia.ts`中就会判断模块是否是`@theia/plugin`，并在确定导入的模块是`@theia/plugin`时针对性的给不同的`plugin`提供不同的`plugin api`实现。
+
+#### 为啥要重写module._load修改模块导入行为？
+
+![theia-plugin-system](https://theia-ide.org/extensiontypes.svg)
+
+需要清楚知道的一点是，第三方开发者开发一个`theia`插件，与`theia`之间的交流都是通过`theia plugin api`来完成的，跟`theia`项目是解耦的。以上面的图来做说明，实现一个`theia vscode plugin`，大致的入口文件长这样：
+
+```ts
+const vscode = require('vscode');
+
+exports.activate = function (context) {
+    context.subscriptions.push(vscode.commands.registerCommand('plugin-a.hello', () => {
+        vscode.window.showInformationMessage('Hello from plugin-a!');
+    }));
+}
+```
+
+上面实现了插件激活的逻辑，一切都很正常，但是如果你好奇点击vscode实际上就是一堆`.d.ts`的类型定义。`theia`提供了`plugin api`的相关命名空间及`api`定义给自定义插件开发者使用，让我们能够在插件开发的时候使用这些不同类别的`plugin api`。但因为这只是一些插件`api`定义，它只是辅助开发者开发的时候用的。在实际插件运行的时候，必须提供一种方法将`plugin api`的具体实现，即`plugin api implementation`替换开发时开发者引入的`vscode`或者是`@theia/plugin`模块，在运行时导入`vscode`或者`@theia/plugin`的时候将`api`类型定义替换成真正的`api`实现。而导入模块的功能就是`module`提供的，我们可以通过修改`module._load`来达到修改模块导入功能的行为，让插件在运行时阶段，使用模块导入的功能时，导入`vscode`或者`@theia/plugin`的时候将`api`类型定义替换成真正的`api`实现。
+
+## 参考
+
+- [Theia Architecture](https://theia-ide.org/docs/architecture/)
+- [Theia Services and Contributions](https://theia-ide.org/docs/services_and_contributions/)
+- [Theia Plug-in System (issues/1482)](https://github.com/eclipse-theia/theia/issues/1482)
+- [Theia Extensions and Plugins](https://theia-ide.org/docs/extensions)
+
 ...未完待续
 
 > [!WARNING]
