@@ -397,9 +397,9 @@ protected async doLoad(): Promise<void> {
 
 由此可见，`MyHeadlessHostedPluginSupport`这个`Contribution`做的事情是针对`Headless Plugin`的相关操作：同步插件、加载插件`Contribution`、启动插件。
 
-![img](./images/start-theia-plugins.png)
-
 ##### 客户端部分
+
+![img](./images/start-theia-plugins.png)
 
 在`examples/browser/src-gen/frontend/index.js`文件中，有一段关于启动前端应用的代码：
 
