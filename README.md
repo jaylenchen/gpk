@@ -682,7 +682,7 @@ protected async doLoad(): Promise<void> {
 
     - 触发`AbstractHostedPluginSupport`的`syncPlugins`方法执行 [文件位置：`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`]
 
-      - **前端处理部分[入口文件位置：`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`]**：在`syncPlugins`过程中，会调用`this.server.getDeployedPluginIds()`，这里的`this.server`实际上是一个接口类型为`HPS`(类型定义为`HPS extends HostedPluginServer | RpcProxy<HostedPluginServer>`)的`rpc`代理对象。它允许你使用`HPS`接口所定义的`API`。``this.server.getDeployedPluginIds()`调用的结果就是发送`rpc`请求给后端对应`rpc`请求处理对象去处理这件`getDeployedPluginIds`事。
+      - **前端处理部分[入口文件位置：`packages/plugin-ext/src/hosted/common/hosted-plugin.ts`]**：在`syncPlugins`过程中，会调用`this.server.getDeployedPluginIds()`，这里的`this.server`实际上是一个接口类型为`HPS`(类型定义为`HPS extends HostedPluginServer | RpcProxy<HostedPluginServer>`)的`rpc`代理对象。它允许你使用`HPS`接口所定义的`API`。`this.server.getDeployedPluginIds()`调用的结果就是发送`rpc`请求给后端对应`rpc`请求处理对象去处理这件`getDeployedPluginIds`事。
       - **后端处理部分[入口文件位置：`packages/plugin-ext/src/hosted/node/plugin-service.ts`]**：前端既然发送了`rpc`请求过来处理`getDeployedPluginIds`这件事，后端就会使用`HostedPluginServerImpl`类实例去处理这件事。我们可以在`HostedPluginServerImpl`类中找到对应的同名方法`getDeployedPluginIds`。在`getDeployedPluginIds`过程中，会调用`this.hostedPlugin.runPluginServer(serverName)`。
 
     - 触发`HostedPluginSupport`的`runPluginServer`方法执行 [文件位置：`packages/plugin-ext/src/hosted/node/hosted-plugin.ts`]
@@ -896,14 +896,20 @@ exports.activate = function (context) {
 
 #### plugin与theia之间的通信
 
+<img src="./images/theia-architecture.png" alt="img" style="zoom:50%;" />
+
+我们回头再看下上面的Theia架构，Theia Plugin都是通过使用Theia Plugin API对Theia进行扩展的。
+
 由于plugin运行在独立的进程当中，使用plugin api是无法直接与theia进行通信，我们需要使用RPC帮助plugin进程和theia主进程之间进行通信。
+
+![img](./images/theia-plugin.png)
 
 Theia Plugin遵循着一种叫做“Main-Ext”的模式。其中Ext指的是跑在独立的插件进程中的那部分代码，而Main根据运行环境的不同，可以有不同的理解：
 
 - 跑在浏览器环境中，那么Main指的是跑在浏览器中的代码。即[Browser-Main]与[Plugin-Ext]通信：
-	![img](./images/plugin-api-diagram.svg)
+ ![img](./images/plugin-api-diagram.png)
 - 跑在Node环境中，那么Main指的是跑在Node中的代码。即 [Node-Main]与[Plugin-Ext]通信：
-	![img](./images/headless-plugin-diagram.svg)
+ ![img](./images/headless-plugin-diagram.png)
 
 插件的生命周期是从Ext端的插件进程中开始的，Ext端需要从Theia中获取的任何状态、命令、以及服务都需要通过RPC调用来请求Main端来完成。反之，在Main端希望获取和修改相关的插件信息（比如更改插件状态）都必须通过RPC调用请求Ext端来完成。因此，往往Main端和Ext端的相关接口是成对出现的，比如[LanguagesExt](https://github.com/eclipse-theia/theia/blob/541b300adc029ab1dd729da1ca49179ace1447b2/packages/plugin-ext/src/common/plugin-api-rpc.ts#L1401)和[LanguagesMain](https://github.com/eclipse-theia/theia/blob/541b300adc029ab1dd729da1ca49179ace1447b2/packages/plugin-ext/src/common/plugin-api-rpc.ts#L1474)。
 
