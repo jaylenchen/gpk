@@ -399,8 +399,6 @@ protected async doLoad(): Promise<void> {
 
 ##### 客户端部分
 
-![img](./images/start-theia-plugins.png)
-
 在`examples/browser/src-gen/frontend/index.js`文件中，有一段关于启动前端应用的代码：
 
 ```ts
@@ -913,7 +911,7 @@ Theia Plugin遵循着一种叫做“Main-Ext”的模式。其中Ext指的是跑
 
 插件的生命周期是从Ext端的插件进程中开始的，Ext端需要从Theia中获取的任何状态、命令、以及服务都需要通过RPC调用来请求Main端来完成。反之，在Main端希望获取和修改相关的插件信息（比如更改插件状态）都必须通过RPC调用请求Ext端来完成。因此，往往Main端和Ext端的相关接口是成对出现的，比如[LanguagesExt](https://github.com/eclipse-theia/theia/blob/541b300adc029ab1dd729da1ca49179ace1447b2/packages/plugin-ext/src/common/plugin-api-rpc.ts#L1401)和[LanguagesMain](https://github.com/eclipse-theia/theia/blob/541b300adc029ab1dd729da1ca49179ace1447b2/packages/plugin-ext/src/common/plugin-api-rpc.ts#L1474)。
 
-![img](./images/ext-impl-use.png)
+![img](./images/plugin-theia-communication.png)
 
 为了能够让每个端与对端通信，每个端都会拥有一个满足对端接口调用的Proxy。在Main端会有Ext端接口的Proxy，在Ext端会有Main端接口的Proxy。
 
