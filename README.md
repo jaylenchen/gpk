@@ -133,13 +133,15 @@ Theia的contribution机制技术上实际就是一个extension包提供给外部
 
 ### plugin机制
 
-![img](./images/main-host.png)
+![img](./images/plugin-dev-runtime.png)
 
 在Theia中支持了运行时动态加载的plugin。用户可以在插件市场点击下载自己希望使用的插件，等待插件下载完毕之后就能够使用该插件的功能了。动态加载plugin的关键技术点就是利用了require()或者是import()，它允许你运行时加载某一个模块。
 
 Theia通过提供Plugin API的方式允许用户插件使用这些Plugin API来做事情。
 
 我们直接看`cloud ide`的前后端部分的主要部分
+
+![img](./images/main-host.png)
 
 ![img](./images/plugin-design.png)
 
