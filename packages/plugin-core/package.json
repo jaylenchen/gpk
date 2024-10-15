@@ -1,5 +1,5 @@
 {
-  "name": "@gpk/plugin-ext",
+  "name": "@gpk/plugin-core",
   "type": "module",
   "scripts": {
     "build": "npx tsc -b",

@@ -4,13 +4,15 @@
 
 <img src='https://raw.githubusercontent.com/jaylenchan/gpk/main/logo/gepick.svg?sanitize=true' alt='gepick-logo' width='160px' />
 
-<h1>@gpk/plugin-ext</h1>
+<h1>@gpk/plugin-core</h1>
 
 <hr />
 
 </div>
 
 # 描述
+
+@gpk/plugin-core为应用提供插件核心系统功能支持
 
 一个端使用HostedPluginServer的proxy来与另一个端的HostedPluginServer的proxy进行通讯。
 其中作为服务端的proxy则会转发实际的请求给真实的HostedPluginServer实例进行处理。
