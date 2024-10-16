@@ -4,5 +4,8 @@
   "scripts": {
     "build": "npx tsc -b",
     "postbuild": "npx tsc-alias"
+  },
+  "dependencies": {
+    "@gpk/core": "workspace:*"
   }
 }

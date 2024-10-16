@@ -426,6 +426,7 @@ __metadata:
   dependencies:
     "@gpk/console": "workspace:*"
     "@gpk/core": "workspace:*"
+    "@gpk/plugin-core": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -448,9 +449,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@gpk/plugin-ext@workspace:packages/plugin-ext":
+"@gpk/plugin-api@workspace:packages/plugin-api":
   version: 0.0.0-use.local
-  resolution: "@gpk/plugin-ext@workspace:packages/plugin-ext"
+  resolution: "@gpk/plugin-api@workspace:packages/plugin-api"
+  dependencies:
+    "@gpk/core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@gpk/plugin-core@workspace:*, @gpk/plugin-core@workspace:packages/plugin-core":
+  version: 0.0.0-use.local
+  resolution: "@gpk/plugin-core@workspace:packages/plugin-core"
+  dependencies:
+    "@gpk/core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@gpk/plugin-registry@workspace:packages/plugin-registry":
+  version: 0.0.0-use.local
+  resolution: "@gpk/plugin-registry@workspace:packages/plugin-registry"
   dependencies:
     "@gpk/core": "workspace:*"
   languageName: unknown

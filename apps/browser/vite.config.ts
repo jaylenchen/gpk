@@ -6,10 +6,11 @@ export default defineConfig({
     dts(),
   ],
   build: {
+    emptyOutDir: false,
     lib: {
-      entry: './dist/index.js',
-      fileName: 'index',
-      name: "@gpk/browser",
+      entry: './dist/frontend/index.js',
+      fileName: 'frontend/index',
+      name: "client",
     },
   },
 });

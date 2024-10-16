@@ -934,6 +934,7 @@ Theia Plugin遵循着一种叫做“Main-Ext”的模式。其中Ext指的是跑
 
 - [Theia Architecture](https://theia-ide.org/docs/architecture/)
 - [Theia Services and Contributions](https://theia-ide.org/docs/services_and_contributions/)
+- [Theia extensions and extensibility(issues/1347)](https://github.com/eclipse-theia/theia/issues/1347)
 - [Theia Plug-in System (issues/1482)](https://github.com/eclipse-theia/theia/issues/1482)
 - [Theia Extensions and Plugins](https://theia-ide.org/docs/extensions)
 

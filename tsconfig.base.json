@@ -14,8 +14,14 @@
       "@gpk/console/*": [
         "./packages/console/src/*"
       ],
-      "@gpk/plugin-ext/*": [
-        "./packages/plugin-ext/src/*"
+      "@gpk/plugin-api/*": [
+        "./packages/plugin-api/src/*"
+      ],
+      "@gpk/plugin-core/*": [
+        "./packages/plugin-core/src/*"
+      ],
+      "@gpk/plugin-registry/*": [
+        "./packages/plugin-registry/src/*"
       ]
     }
   }
