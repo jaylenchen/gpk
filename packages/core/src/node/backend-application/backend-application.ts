@@ -8,13 +8,22 @@ export class BackendApplication {
   ) { }
 
   async start(): Promise<void> {
-    this.initializeContributions()
+    await this.initializeContributions();
+    await this.startContributions();
   }
 
   async initializeContributions(): Promise<void> {
     for (const contribution of this.contributions) {
       if (contribution.onInitialize) {
         contribution.onInitialize();
+      }
+    }
+  }
+
+  async startContributions(): Promise<void> {
+    for (const contribution of this.contributions) {
+      if (contribution.onStart) {
+        contribution.onStart();
       }
     }
   }

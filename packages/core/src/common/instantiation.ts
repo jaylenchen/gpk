@@ -1,4 +1,4 @@
-import { decorate, inject, injectable, multiInject } from 'inversify';
+import { ContainerModule, decorate, inject, injectable, multiInject } from 'inversify';
 
 // 加一个{ _serviceBrand?: 'ServiceIdentifier' }是为了屏蔽掉ServiceIdentifier展开的类型，而是在移入指定装饰器的时候将类型显示成ServiceIdentifier<IXXService>
 // 加上{ _serviceBrand?: 'ServiceIdentifier' }并不会影响显示的具体类型，只是为了让类型显示成ServiceIdentifier<IXXService>
@@ -32,6 +32,25 @@ export interface IServiceExtension {
    * 暴露服务API：当服务需要暴露一些API代理到Gepick身上时，可以在这里进行暴露，暴露后的服务API可以通过gepick实例直接进行调用
    */
   exposeApi?: () => void
+}
+
+export interface IService {
+  id: symbol | (new (...args: any[]) => any),
+  implementation?: new (...args: any[]) => any,
+  constantValue?: any,
+  tag?: symbol
+}
+
+export function defineContainerModule(services: IService[]) {
+  return new ContainerModule((bind) => {
+    services.forEach((service) => {
+      bind(service.id).to(createService(service.implementation)).inSingletonScope();
+
+      if (service.tag) {
+        bind(service.tag).toService(service.id)
+      }
+    })
+  })
 }
 
 export { optional, postConstruct, Container, ContainerModule } from 'inversify'

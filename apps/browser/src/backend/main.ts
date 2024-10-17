@@ -14,6 +14,9 @@ async function startBackendApplication() {
 
   container.load(pluginBackendModule);
 
+  console.log("🚀 ~ startBackendApplication ~ container:")
+
+
   const backendApplication = container.get(BackendApplication);
 
   backendApplication.start()

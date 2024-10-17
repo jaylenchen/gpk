@@ -3,13 +3,13 @@ import { IPluginDeployer } from '@gpk/plugin-core/common/plugin-deployer';
 import { createServiceIdentifier } from '@gpk/core/lib/common/instantiation';
 
 
-export const _IPluginDeployerContribution = Symbol.for("IPluginDeployerContribution")
-export const IPluginDeployerContribution = createServiceIdentifier<IPluginDeployerContribution>(_IPluginDeployerContribution);
+export const PLUGIN_DEPLOYER_CONTRIBUTION = Symbol.for("PluginDeployerContribution")
+export const IPluginDeployerContribution = createServiceIdentifier<IPluginDeployerContribution>(PLUGIN_DEPLOYER_CONTRIBUTION);
 export interface IPluginDeployerContribution extends IBackendApplicationContribution { }
 
 export class PluginDeployerContribution implements IBackendApplicationContribution {
 
-  constructor(@IPluginDeployer protected pluginDeployer: IPluginDeployer) { }
+  constructor(@IPluginDeployer private readonly pluginDeployer: IPluginDeployer) { }
 
   async onInitialize(): Promise<void> {
     this.pluginDeployer.start().catch(error => {

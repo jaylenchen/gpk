@@ -12,4 +12,14 @@ export class PluginDeployerHandler implements IPluginDeployerHandler {
   protected async deployPlugin(): Promise<boolean> {
     return true;
   }
+
+  async getDeployedPlugins(): Promise<number> {
+    console.log("🚀 ~ PluginDeployerHandler ~ getDeployedPlugins ~ getDeployedPlugins");
+
+    return 10
+  }
+
+  async getDeployedPluginIds(): Promise<string[]> {
+    return ["plugin1", "plugin2"]
+  }
 }

@@ -1466,6 +1466,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^22.7.6":
+  version: 22.7.6
+  resolution: "@types/node@npm:22.7.6"
+  dependencies:
+    undici-types: "npm:~6.19.2"
+  checksum: 10/46a8d6bcd61098ece36f790c4bd500537cf78fe075dbfe48f1e07a29efa6cba18cff3b2564aed80fb183244f5d9a95a63b09e27c9f5181ed927ac16ef493bd95
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.4
   resolution: "@types/normalize-package-data@npm:2.4.4"
@@ -3324,6 +3333,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "gpk@workspace:."
   dependencies:
+    "@types/node": "npm:^22.7.6"
     lerna: "npm:^8.1.8"
     rimraf: "npm:^6.0.1"
     tsc-alias: "npm:^1.8.10"
@@ -6536,6 +6546,13 @@ __metadata:
   bin:
     uglifyjs: bin/uglifyjs
   checksum: 10/6b9639c1985d24580b01bb0ab68e78de310d38eeba7db45bec7850ab4093d8ee464d80ccfaceda9c68d1c366efbee28573b52f95e69ac792354c145acd380b11
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.19.2":
+  version: 6.19.8
+  resolution: "undici-types@npm:6.19.8"
+  checksum: 10/cf0b48ed4fc99baf56584afa91aaffa5010c268b8842f62e02f752df209e3dea138b372a60a963b3b2576ed932f32329ce7ddb9cb5f27a6c83040d8cd74b7a70
   languageName: node
   linkType: hard
 
