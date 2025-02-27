@@ -3,15 +3,15 @@ import { IBackendApplicationContribution } from "@gpk/core/lib/node/backend-appl
 import { IPluginServer } from '@gpk/plugin-core/common/plugin-server';
 
 
-export const PLUGIN_SUPPORT = Symbol.for("PluginSupport")
-export const IPluginSupport = createServiceIdentifier<IPluginSupport>(PLUGIN_SUPPORT);
-export interface IPluginSupport {
+export const PLUGIN_SERVICE = Symbol.for("PluginService")
+export const IPluginSupport = createServiceIdentifier<IPluginService>(PLUGIN_SERVICE);
+export interface IPluginService {
   syncPlugins(): Promise<void>;
 
   startPlugins(): Promise<void>
 }
 
-export class PluginSupport implements IPluginSupport, IBackendApplicationContribution {
+export class PluginService implements IPluginService, IBackendApplicationContribution {
 
   constructor(@IPluginServer private readonly pluginServer: IPluginServer) { }
 

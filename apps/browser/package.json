@@ -4,7 +4,8 @@
   "scripts": {
     "clean": "npx tsc --build --clean",
     "build": "npx tsc --build && npx lerna run postbuild && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.ts",
-    "start-server": "node ./dist/backend/main.js",
+    "dev": "npx tsc --build && npx lerna run postbuild && npx vite -c vite.config.node.ts",
+    "start-server": "node ./dist/main.js",
     "start-browser": "node ./dist/frontend/index.js"
   },
   "dependencies": {

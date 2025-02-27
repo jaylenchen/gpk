@@ -1,7 +1,7 @@
 // 对应theia/packages/plugin-ext/src/hosted/node/plugin-service.ts
 
 import { IPluginDeployerHandler } from '@gpk/plugin-core/common/plugin-deployer';
-import { IPluginProcess } from '@gpk/plugin-core/common/plugin-process';
+import { IPluginProcessManager } from '@gpk/plugin-core/common/plugin-process';
 import { IPluginServer } from '@gpk/plugin-core/common/plugin-server';
 
 export class PluginServer implements IPluginServer {
@@ -10,7 +10,7 @@ export class PluginServer implements IPluginServer {
 
   constructor(
     @IPluginDeployerHandler private readonly pluginDeployerHandler: IPluginDeployerHandler,
-    @IPluginProcess private readonly pluginProcess: IPluginProcess
+    @IPluginProcessManager private readonly pluginProcessManager: IPluginProcessManager
   ) { }
 
   async getDeployedPluginIds(): Promise<string[]> {
@@ -35,7 +35,7 @@ export class PluginServer implements IPluginServer {
 
   runPluginServer(serverName?: string): void {
     if (!this.isPluginProcessRunning) {
-      this.pluginProcess.runPluginServer(serverName);
+      this.pluginProcessManager.runPluginServer(serverName);
       this.isPluginProcessRunning = true;
     }
   }

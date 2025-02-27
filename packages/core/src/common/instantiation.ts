@@ -34,20 +34,40 @@ export interface IServiceExtension {
   exposeApi?: () => void
 }
 
-export interface IService {
-  id: symbol | (new (...args: any[]) => any),
-  implementation?: new (...args: any[]) => any,
-  constantValue?: any,
-  tag?: symbol
+export enum ServiceImplementationType {
+  ConstantValue,
+  Class
 }
+
+export type INewable = new (...args: any[]) => any;
+type ImplementationType<T extends ServiceImplementationType> =
+  T extends ServiceImplementationType.Class ? INewable : any;
+
+export interface IBindedService<T extends ServiceImplementationType> {
+  type: T;
+  id: symbol | INewable;
+  implementation: ImplementationType<T>;
+  tag?: symbol;
+}
+
+export type IService = IBindedService<ServiceImplementationType.Class> | IBindedService<ServiceImplementationType.ConstantValue>;
 
 export function defineContainerModule(services: IService[]) {
   return new ContainerModule((bind) => {
     services.forEach((service) => {
-      bind(service.id).to(createService(service.implementation)).inSingletonScope();
+      switch (service.type) {
+        case ServiceImplementationType.Class: {
+          bind(service.id).to(createService(service.implementation)).inSingletonScope();
+          break;
+        }
+        case ServiceImplementationType.ConstantValue: {
+          bind(service.id).toConstantValue(service.implementation);
+          break;
+        }
+      }
 
       if (service.tag) {
-        bind(service.tag).toService(service.id)
+        bind(service.tag).toService(service.id);
       }
     })
   })

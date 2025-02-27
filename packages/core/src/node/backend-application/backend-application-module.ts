@@ -1,8 +1,9 @@
 import { BackendApplication } from '@gpk/core/node/backend-application/backend-application';
-import { defineContainerModule } from '@gpk/core/common/instantiation';
+import { defineContainerModule, ServiceImplementationType } from '@gpk/core/common/instantiation';
 
 export default defineContainerModule([
   {
+    type: ServiceImplementationType.Class,
     id: BackendApplication,
     implementation: BackendApplication
   }

@@ -1,7 +1,7 @@
-import { IPluginProcess, IPluginProcessConfiguration } from '@gpk/plugin-core/common/plugin-process';
+import { IPluginProcessManager, IPluginProcessConfiguration } from '@gpk/plugin-core/common/plugin-process';
 import * as cp from 'child_process';
 
-export class PluginProcess implements IPluginProcess {
+export class PluginProcessManager implements IPluginProcessManager {
 
   private childProcess: cp.ChildProcess | undefined;
 
@@ -18,7 +18,7 @@ export class PluginProcess implements IPluginProcess {
       execArgv: [],
       stdio: ['pipe', 'pipe', 'pipe', 'ipc', 'overlapped' as 'pipe']
     };
-    const childProcess = cp.fork(this.pluginProcessConfiguration.path, forkOptions);
+    const childProcess = cp.fork(this.pluginProcessConfiguration.puginHostMain, forkOptions);
 
     childProcess.stdout!.on('data', data => console.info(`[${options.serverName}: ${childProcess.pid}] ${data.toString().trim()}`));
     childProcess.stderr!.on('data', data => console.error(`[${options.serverName}: ${childProcess.pid}] ${data.toString().trim()}`));
