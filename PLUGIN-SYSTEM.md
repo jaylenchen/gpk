@@ -1,7 +1,9 @@
-# 插件系统设计流程
-
-![img](./images/plugin-system-flow.svg)
-
-# 插件系统设计
+# 插件系统
 
 ![img](./images/plugin-system-design.svg)
+
+## 通讯模式
+![img](./images/plugin-core-communication.png)
+
+## 代码结构
+![img](./images/plugin-system-flow.svg)
